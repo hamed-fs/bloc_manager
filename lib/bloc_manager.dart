@@ -4,9 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc_manager/bloc/sample_bloc.dart';
 
 abstract class BlocManagerContract {
-  void register<T extends Bloc<dynamic, dynamic>>(Function formula);
+  void register<T extends Bloc<dynamic, dynamic>>(Function predicate);
 
-  T fetch<T>();
+  T fetch<T extends Bloc<dynamic, dynamic>>();
 
   void dispose<T>();
 }
@@ -16,12 +16,12 @@ class MockBlocManager extends BlocManagerContract {
   void dispose<T>() {}
 
   @override
-  T fetch<T>() {
+  T fetch<T extends Bloc<dynamic, dynamic>>() {
     throw UnimplementedError();
   }
 
   @override
-  void register<T extends Bloc<dynamic, dynamic>>(Function formula) {}
+  void register<T extends Bloc<dynamic, dynamic>>(Function predicate) {}
 }
 
 class BlocManager extends BlocManagerContract {
@@ -31,17 +31,20 @@ class BlocManager extends BlocManagerContract {
 
   static final BlocManager _instance = BlocManager._internal();
 
+  static BlocManager get instance => _instance;
+
   final Map<dynamic, Function> _factories = <dynamic, Function>{};
-  final Map<dynamic, dynamic> _repository = <dynamic, Bloc<dynamic, dynamic>>{};
+  final Map<dynamic, Bloc<dynamic, dynamic>> _repository =
+      <dynamic, Bloc<dynamic, dynamic>>{};
 
   Bloc<dynamic, dynamic> _invoke<T>() => _repository[T] = _factories[T]();
 
   @override
-  void register<T extends Bloc<dynamic, dynamic>>(Function formula) =>
-      _factories[T] = formula;
+  void register<T extends Bloc<dynamic, dynamic>>(Function predicate) =>
+      _factories[T] = predicate;
 
   @override
-  T fetch<T>() => _repository.containsKey(T)
+  T fetch<T extends Bloc<dynamic, dynamic>>() => _repository.containsKey(T)
       ? _repository[T]
       : _factories.containsKey(T) ? _invoke<T>() : null;
 
@@ -55,11 +58,8 @@ class BlocManager extends BlocManagerContract {
 }
 
 void main() {
-  final BlocManagerContract manager = BlocManager();
-
-  // manager.register<SampleBloc>(() => SampleBloc());
-
-  final SampleBloc sampleBloc = manager.fetch<SampleBloc>();
+  BlocManager.instance.register<SampleBloc>(() => SampleBloc());
+  final SampleBloc sampleBloc = BlocManager.instance.fetch<SampleBloc>();
 
   print(sampleBloc);
 }
