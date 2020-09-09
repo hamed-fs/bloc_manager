@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+import 'package:flutter_bloc_manager/bloc/sample_bloc.dart';
+import 'package:flutter_bloc_manager/bloc_manager.dart';
+
+void main() {
+  BlocManager.instance.register<SampleBloc>(() => SampleBloc());
+  final SampleBloc sampleBloc = BlocManager.instance.fetch<SampleBloc>();
+
+  print(sampleBloc);
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

@@ -1,7 +1,4 @@
-// ignore_for_file: cascade_invocations
-
 import 'package:bloc/bloc.dart';
-import 'package:flutter_bloc_manager/bloc/sample_bloc.dart';
 
 abstract class BlocManagerContract {
   void register<T extends Bloc<dynamic, dynamic>>(Function predicate);
@@ -55,11 +52,4 @@ class BlocManager extends BlocManagerContract {
       _repository.remove(T);
     }
   }
-}
-
-void main() {
-  BlocManager.instance.register<SampleBloc>(() => SampleBloc());
-  final SampleBloc sampleBloc = BlocManager.instance.fetch<SampleBloc>();
-
-  print(sampleBloc);
 }
