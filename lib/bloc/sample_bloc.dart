@@ -12,7 +12,7 @@ class SampleBloc extends Bloc<SampleEvent, SampleState> {
   SampleBloc() : super(SampleInitial()) {
     BlocManager.instance.addListener<ConnectivityBloc>(
       key: 'Connectivity',
-      handler: (dynamic state) async => print(state),
+      handler: (dynamic state) async => add(UpdateEvent()),
     );
   }
 
@@ -20,6 +20,8 @@ class SampleBloc extends Bloc<SampleEvent, SampleState> {
   Stream<SampleState> mapEventToState(
     SampleEvent event,
   ) async* {
-    // TODO: implement mapEventToState
+    if (event is UpdateEvent) {
+      print(UpdateEvent().runtimeType);
+    }
   }
 }

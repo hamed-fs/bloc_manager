@@ -7,8 +7,8 @@ import 'package:flutter_bloc_manager/bloc_manager.dart';
 void main() {
   runApp(MyApp());
 
-  BlocManager.instance.register<SampleBloc>(() => SampleBloc());
   BlocManager.instance.register<ConnectivityBloc>(() => ConnectivityBloc());
+  BlocManager.instance.register<SampleBloc>(() => SampleBloc());
   BlocManager.instance.fetch<SampleBloc>();
 
   print('01');
@@ -18,7 +18,7 @@ void main() {
 
   print('02');
 
-  Future<void>.delayed(Duration(seconds: 10), () {
+  Future<void>.delayed(const Duration(seconds: 10), () {
     BlocManager.instance.removeListener('Connectivity');
     BlocManager.instance.fetch<ConnectivityBloc>().add(UpdateConnectivity());
     print('04');
@@ -26,7 +26,7 @@ void main() {
 
   print('03');
 
-  // print(BlocManager.instance.fetch<SampleBloc>());
+  print(BlocManager.instance.fetch<SampleBloc>());
 }
 
 class MyApp extends StatelessWidget {
