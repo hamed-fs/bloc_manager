@@ -84,12 +84,10 @@ class BlocManager extends BlocManagerContract {
 
   @override
   Future<void> removeListener(String key) async {
-    if (!_subscriptions.containsKey(key)) {
-      return;
+    if (_subscriptions.containsKey(key)) {
+      await _subscriptions[key].cancel();
+      _subscriptions.remove(key);
     }
-
-    await _subscriptions[key].cancel();
-    _subscriptions.remove(key);
   }
 
   @override
