@@ -16,9 +16,9 @@ abstract class BlocManagerContract {
     @required BlocManagerListenerHandler handler,
   });
 
-  Future<void> removeListener(String key);
+  Future<void> removeListener<T>([String key]);
 
-  void dispose<T>();
+  Future<void> dispose<T>();
 }
 
 class MockBlocManager extends BlocManagerContract {
@@ -37,10 +37,10 @@ class MockBlocManager extends BlocManagerContract {
   }) {}
 
   @override
-  Future<void> removeListener(String key) async {}
+  Future<void> removeListener<T>([String key]) async {}
 
   @override
-  void dispose<T>() {}
+  Future<void> dispose<T>() async {}
 }
 
 class BlocManager extends BlocManagerContract {
@@ -57,11 +57,6 @@ class BlocManager extends BlocManagerContract {
       <dynamic, Bloc<dynamic, dynamic>>{};
   final Map<String, StreamSubscription<dynamic>> _subscriptions =
       <String, StreamSubscription<dynamic>>{};
-
-  static String _getCouldNotFindObjectErrorMessage(dynamic type) =>
-      'Could not find <$type> object, use register method to add it to bloc manager.';
-
-  Bloc<dynamic, dynamic> _invoke<T>() => _repository[T] = _factories[T]();
 
   @override
   void register<T extends Bloc<dynamic, dynamic>>(Function predicate) =>
@@ -81,7 +76,9 @@ class BlocManager extends BlocManagerContract {
     @required String key,
     @required BlocManagerListenerHandler handler,
   }) {
-    if (_subscriptions.containsKey(key)) {
+    final String objectKey = _getKey(type: T, key: key);
+
+    if (_subscriptions.containsKey(objectKey)) {
       return;
     }
 
@@ -91,22 +88,44 @@ class BlocManager extends BlocManagerContract {
       );
     }
 
-    _subscriptions[key] = fetch<T>().listen((dynamic state) => handler(state));
+    _subscriptions[objectKey] = fetch<T>().listen(
+      (dynamic state) => handler(state),
+    );
   }
 
   @override
-  Future<void> removeListener(String key) async {
-    if (_subscriptions.containsKey(key)) {
+  Future<void> removeListener<T>([String key = '']) async {
+    final String objectKey = _getKey(type: T, key: key);
+
+    _subscriptions.keys
+        .where(
+      (String itemKey) =>
+          key.isEmpty ? itemKey.contains(objectKey) : itemKey == objectKey,
+    )
+        .forEach((String key) async {
       await _subscriptions[key].cancel();
       _subscriptions.remove(key);
-    }
+    });
   }
 
   @override
-  void dispose<T>() {
+  Future<void> dispose<T>() async {
     if (_repository.containsKey(T)) {
-      _repository[T].close();
+      await _repository[T].close();
       _repository.remove(T);
+
+      await removeListener<T>();
     }
   }
+
+  Bloc<dynamic, dynamic> _invoke<T>() => _repository[T] = _factories[T]();
+
+  static String _getKey({
+    @required dynamic type,
+    String key = '',
+  }) =>
+      '$type::$key';
+
+  static String _getCouldNotFindObjectErrorMessage(dynamic type) =>
+      'Could not find <$type> object, use register method to add it to bloc manager.';
 }
