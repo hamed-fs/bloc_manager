@@ -58,6 +58,9 @@ class BlocManager extends BlocManagerContract {
   final Map<String, StreamSubscription<dynamic>> _subscriptions =
       <String, StreamSubscription<dynamic>>{};
 
+  static String _getCouldNotFindObjectError(dynamic type) =>
+      'Could not find <$type> object, use register method to add it to bloc manager.';
+
   Bloc<dynamic, dynamic> _invoke<T>() => _repository[T] = _factories[T]();
 
   @override
@@ -69,7 +72,7 @@ class BlocManager extends BlocManagerContract {
       ? _repository[T]
       : _factories.containsKey(T)
           ? _invoke<T>()
-          : throw BlocManagerException(message: 'Could not find object.');
+          : throw BlocManagerException(message: _getCouldNotFindObjectError(T));
 
   @override
   void addListener<T extends Bloc<dynamic, dynamic>>({
@@ -81,7 +84,7 @@ class BlocManager extends BlocManagerContract {
     }
 
     if (fetch<T>() == null) {
-      throw BlocManagerException(message: 'Could not find object.');
+      throw BlocManagerException(message: _getCouldNotFindObjectError(T));
     }
 
     _subscriptions[key] = fetch<T>().listen((dynamic state) async {

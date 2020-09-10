@@ -18,7 +18,7 @@ void main() {
 
   print('02');
 
-  Future<void>.delayed(const Duration(seconds: 10), () {
+  Future<void>.delayed(const Duration(seconds: 3), () {
     BlocManager.instance.removeListener('Connectivity');
     BlocManager.instance.fetch<ConnectivityBloc>().add(UpdateConnectivity());
     print('04');
