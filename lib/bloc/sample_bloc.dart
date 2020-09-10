@@ -12,7 +12,8 @@ class SampleBloc extends Bloc<SampleEvent, SampleState> {
   SampleBloc() : super(SampleInitial()) {
     BlocManager.instance.addListener<ConnectivityBloc>(
       key: 'Connectivity',
-      handler: (dynamic state) async => add(UpdateEvent()),
+      handler: (dynamic state) async => Future<void>.delayed(
+          const Duration(seconds: 10), () => add(UpdateEvent())),
     );
   }
 

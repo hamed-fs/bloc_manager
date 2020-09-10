@@ -4,7 +4,7 @@ import 'package:flutter_bloc_manager/bloc_manager_exception.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 
-typedef BlocManagerListenerHandler = Future<void> Function(dynamic state);
+typedef BlocManagerListenerHandler = void Function(dynamic state);
 
 abstract class BlocManagerContract {
   void register<T extends Bloc<dynamic, dynamic>>(Function predicate);
@@ -91,9 +91,7 @@ class BlocManager extends BlocManagerContract {
       );
     }
 
-    _subscriptions[key] = fetch<T>().listen((dynamic state) async {
-      await handler(state);
-    });
+    _subscriptions[key] = fetch<T>().listen((dynamic state) => handler(state));
   }
 
   @override
