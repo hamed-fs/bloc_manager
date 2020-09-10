@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc_manager/bloc/connectivity_bloc.dart';
 
 import 'package:flutter_bloc_manager/bloc/sample_bloc.dart';
 import 'package:flutter_bloc_manager/bloc_manager.dart';
 
 void main() {
-  BlocManager.instance.register<SampleBloc>(() => SampleBloc());
-  final SampleBloc sampleBloc = BlocManager.instance.fetch<SampleBloc>();
-
-  print(sampleBloc);
-
   runApp(MyApp());
+
+  BlocManager.instance.register<SampleBloc>(() => SampleBloc());
+  BlocManager.instance.register<ConnectivityBloc>(() => ConnectivityBloc());
+  BlocManager.instance.fetch<SampleBloc>();
+
+  print('01');
+
+  BlocManager.instance.fetch<ConnectivityBloc>().add(UpdateConnectivity());
+  BlocManager.instance.fetch<ConnectivityBloc>().add(UpdateConnectivity());
+
+  print('02');
+
+  Future<void>.delayed(Duration(seconds: 10), () {
+    BlocManager.instance.removeListener('Connectivity');
+    BlocManager.instance.fetch<ConnectivityBloc>().add(UpdateConnectivity());
+    print('04');
+  });
+
+  print('03');
+
+  // print(BlocManager.instance.fetch<SampleBloc>());
 }
 
 class MyApp extends StatelessWidget {
