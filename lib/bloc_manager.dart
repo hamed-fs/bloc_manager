@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_bloc_manager/bloc_manager_exception.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 
@@ -66,7 +67,9 @@ class BlocManager extends BlocManagerContract {
   @override
   T fetch<T extends Bloc<dynamic, dynamic>>() => _repository.containsKey(T)
       ? _repository[T]
-      : _factories.containsKey(T) ? _invoke<T>() : null;
+      : _factories.containsKey(T)
+          ? _invoke<T>()
+          : throw BlocManagerException(message: 'Could not find object.');
 
   @override
   void addListener<T extends Bloc<dynamic, dynamic>>({
@@ -75,6 +78,10 @@ class BlocManager extends BlocManagerContract {
   }) {
     if (_subscriptions.containsKey(key)) {
       return;
+    }
+
+    if (fetch<T>() == null) {
+      throw BlocManagerException(message: 'Could not find object.');
     }
 
     _subscriptions[key] = fetch<T>().listen((dynamic state) async {

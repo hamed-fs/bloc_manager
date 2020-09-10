@@ -7,8 +7,8 @@ import 'package:flutter_bloc_manager/bloc_manager.dart';
 void main() {
   runApp(MyApp());
 
-  BlocManager.instance.register<ConnectivityBloc>(() => ConnectivityBloc());
   BlocManager.instance.register<SampleBloc>(() => SampleBloc());
+  BlocManager.instance.register<ConnectivityBloc>(() => ConnectivityBloc());
   BlocManager.instance.fetch<SampleBloc>();
 
   print('01');
@@ -53,9 +53,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: const Center(),
-    );
+        appBar: AppBar(
+          title: Text(widget.title),
+        ),
+        body: const Center(),
+      );
 }
