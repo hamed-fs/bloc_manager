@@ -1,8 +1,8 @@
 import 'dart:async';
-
-import 'package:flutter_bloc_manager/bloc_manager_exception.dart';
 import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
+
+import 'package:flutter_bloc_manager/bloc_manager_exception.dart';
 
 typedef BlocManagerListenerHandler = void Function(dynamic state);
 
