@@ -120,11 +120,7 @@ class BlocManager extends BlocManagerContract {
 
   Bloc<dynamic, dynamic> _invoke<T>() => _repository[T] = _factories[T]();
 
-  static String _getKey({
-    @required dynamic type,
-    String key = '',
-  }) =>
-      '$type::$key';
+  static String _getKey({@required dynamic type, String key}) => '$type::$key';
 
   static String _getCouldNotFindObjectErrorMessage(dynamic type) =>
       'Could not find <$type> object, use register method to add it to bloc manager.';
