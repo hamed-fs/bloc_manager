@@ -3,7 +3,7 @@ class BlocManagerException implements Exception {
     this.message,
   });
 
-  String message;
+  final String message;
 
   @override
   String toString() => '$runtimeType: $message';
